@@ -259,7 +259,7 @@ capture="environment">
 結構參數</div> 
 <div class="row g-3 mb-3"> 
 <div class="col-12"><label class="form-label">路燈編號
-</label><input type="text" id="hub_id" class="form-control"></div> 
+</label><input type="text" class="form-control"></div> 
 <div class="col-12"> 
 <label class="form-label">高度選擇</label> 
 <select class="form-select" id="pole_height_select" 
@@ -353,7 +353,7 @@ hwList.forEach(dev => {
             </div>
         </div>
     `);
-}); 
+});
 </script> 
 </div> 
 </div> 
@@ -500,9 +500,6 @@ text-light">無人機物流</label></div></div>
 class="fas fa-cogs"></i> 執行科學選址計算</button> 
 <div id="result-box" class="alert alert-dark mt-3 d-none" 
 style="border: 1px solid var(--accent-cyan); background: #121212;"></div> 
-<button class="btn-tech mt-2" style="background: #444;" onclick="exportToCSV()">
-    <i class="fas fa-file-csv"></i> 匯出查修紀錄 (CSV)
-</button>
 </div> 
 </div> 
 </div> 
@@ -517,7 +514,7 @@ function initMap(lat = 26.1517, lng = 119.9397) { // 預設馬祖南竿
 if(map) { map.remove(); } 
 map = L.map('map').setView([lat, lng], 14); 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
-marker = L.marker([lat, lng], {autoPan: true}).addTo(map); 
+marker = L.marker([lat, lng], {draggable: true}).addTo(map); 
 marker.on('dragend', function(e) { 
 const pos = marker.getLatLng(); 
 document.getElementById('lat').value = pos.lat.toFixed(6); 
@@ -533,76 +530,32 @@ map.invalidateSize(); }
 }); 
 }); 
 window.onload = () => { initMap(); }; 
-// --- GPS 定位 (修正版) --- 
-// 1. 定義 success 函數 (原本代碼缺少這段)
-function success(position) {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    // 更新輸入框
-    document.getElementById('lat').value = lat.toFixed(6);
-    document.getElementById('lng').value = lng.toFixed(6);
-
-    // 更新地圖標籤位置
-    if (marker) {
-        marker.setLatLng([lat, lng]);
-        map.setView([lat, lng], 16); // 定位後放大地圖
-    }
-    
-    // 更新狀態標籤
-    const statusBadge = document.getElementById('gps-status');
-    statusBadge.innerHTML = "定位成功";
-    statusBadge.className = "badge bg-success text-light";
-}
-
-// 2. 修改後的 getLocation (加上 async 並修正插件呼叫)
-async function getLocation() {
-    const btn = document.querySelector('button[onclick="getLocation()"]');
-    const statusBadge = document.getElementById('gps-status');
-    const originalText = btn.innerHTML;
-
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 啟動中...';
-
-    // 1. 偵測環境
-    const isApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
-
-    if (isApp) {
-        try {
-            const Geolocation = window.Capacitor.Plugins.Geolocation;
-            
-            // 2. [關鍵] 主動要求 App 權限，這會觸發 Android 的系統彈窗
-            const permStatus = await Geolocation.requestPermissions();
-            
-            if (permStatus.location === 'granted') {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 衛星定位中...';
-                const coordinates = await Geolocation.getCurrentPosition({
-                    enableHighAccuracy: true,
-                    timeout: 10000
-                });
-                success(coordinates); // 執行原本的 success 邏輯
-            } else {
-                alert("您拒絕了定位權限，請至手機設定中開啟。");
-            }
-        } catch (e) {
-            console.error(e);
-            alert("App 定位發生錯誤：" + e.message);
-        } finally {
-            btn.innerHTML = originalText;
-        }
-    } else {
-        // 瀏覽器模式 (GitHub Pages 走這裡)
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, (err) => {
-                alert("瀏覽器定位失敗，請確保開啟 HTTPS 與 GPS");
-                btn.innerHTML = originalText;
-            }, { enableHighAccuracy: true });
-        } else {
-            alert("設備不支援 Geolocation");
-            btn.innerHTML = originalText;
-        }
-    }
-}
-
+// --- GPS 定位 --- 
+function getLocation() { 
+const badge = document.getElementById("gps-status"); 
+if (navigator.geolocation) { 
+badge.innerText = "定位中..."; 
+badge.className = "badge bg-warning text-dark"; 
+navigator.geolocation.getCurrentPosition( 
+function(position) { 
+const lat = position.coords.latitude; 
+const lng = position.coords.longitude; 
+document.getElementById("lat").value = lat.toFixed(6); 
+document.getElementById("lng").value = lng.toFixed(6); 
+initMap(lat, lng); 
+badge.innerText = `精度: ±
+${position.coords.accuracy.toFixed(0)}m`; 
+badge.className = "badge bg-success text-white"; 
+}, 
+function(error) { 
+alert("獲取 GPS 失敗，請確認裝置權限。"); 
+badge.innerText = "定位失敗"; 
+badge.className = "badge bg-danger text-white"; 
+}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 
+0 } 
+); 
+} 
+} 
 // --- 高度選單切換處理 (連江縣基礎結構判斷) --- 
 function handleHeightChange() { 
 const selectVal = 
@@ -644,90 +597,66 @@ inputField.value = '';
 } 
 }); 
 }); 
-// --- 4. 優先權計算與儲存 ---
-function calculatePriority() {
-    const sumGov = document.querySelectorAll('.srv-gov:checked').length;
-    const sumGre = document.querySelectorAll('.srv-gre:checked').length;
-    const sumMaaS = document.querySelectorAll('.srv-maas:checked').length;
-    const sumCom = document.querySelectorAll('.srv-com:checked').length;
-    const sumDooh = document.querySelectorAll('.srv-dooh:checked').length;
-    const sumDaas = document.querySelectorAll('.srv-daas:checked').length;
-    
-    let baseScore = (sumGov * 20) + (sumGre * 15) + (sumMaaS * 12) + (sumCom * 12) + (sumDooh * 8) + (sumDaas * 10);
-    
-    const pCrash = parseInt(document.getElementById('prob_crash').value);
-    const pAcc = parseInt(document.getElementById('prob_acc').value);
-    const pFog = parseInt(document.getElementById('prob_fog').value);
-    const pTour = parseInt(document.getElementById('prob_tour').value);
-    const pSpeed = parseInt(document.getElementById('prob_speed').value);
-    const terrain = parseInt(document.getElementById('terrain').value);
-    
-    let envMultiplier = 1.0;
-    if (terrain > 1) envMultiplier += 0.1;
-    if (pCrash >= 4 || pAcc >= 4 || pSpeed >= 4) envMultiplier += 0.2;
-    if (pFog >= 4) envMultiplier += 0.15;
-    if (pTour >= 4) envMultiplier += 0.1;
-    
-    const baseStrength = document.getElementById('base_strength').value;
-    let constructPenalty = (baseStrength === 'low') ? 15 : 0;
-    
-    let finalScore = (baseScore * envMultiplier) - constructPenalty;
-    finalScore = Math.max(0, Math.min(100, Math.round(finalScore * 0.45 + 20)));
-
-    // 顯示結果
-    const resultBox = document.getElementById('result-box');
-    resultBox.classList.remove('d-none');
-    resultBox.innerHTML = `
-        <h6 class="text-info text-center fw-bold mb-3">多維度選址分析報告</h6>
-        <div style="font-size: 2.5rem; color: var(--accent-cyan); text-align: center; text-shadow: 0 0 10px rgba(0,240,255,0.5);">
-            ${finalScore} <span style="font-size: 1rem; color: #aaa;">/ 100 PTS</span>
-        </div>
-        <hr style="border-color: #444;">
-        <ul style="font-size: 0.85rem; color: #ccc; line-height: 1.8;">
-            <li>環境加權係數：<span class="text-warning">+${Math.round((envMultiplier-1)*100)}%</span></li>
-            <li>基礎施工阻力：<span class="text-danger">-${constructPenalty}</span> 分</li>
-        </ul>
-    `;
-    
-    // 執行儲存
-    saveRecord(finalScore);
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-}
-
-function saveRecord(score) {
-    const record = {
-        id: document.getElementById('hub_id').value || "未命名",
-        lat: document.getElementById('lat').value,
-        lng: document.getElementById('lng').value,
-        score: score,
-        time: new Date().toLocaleString()
-    };
-    let allRecords = JSON.parse(localStorage.getItem('street_light_logs') || "[]");
-    allRecords.push(record);
-    localStorage.setItem('street_light_logs', JSON.stringify(allRecords));
-    alert('分析完成！資料已存入手機本機。');
-}
-
-function exportToCSV() {
-    const data = JSON.parse(localStorage.getItem('street_light_logs') || "[]");
-    if (data.length === 0) { alert("無紀錄可匯出"); return; }
-    let csvContent = "\uFEFF路燈編號,緯度,經度,分數,時間\n";
-    data.forEach(r => { csvContent += `${r.id},${r.lat},${r.lng},${r.score},${r.time}\n`; });
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `Survey_Report_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-}
-
-document.querySelectorAll('.toggle-input').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-        const inputField = document.getElementById(this.getAttribute('data-target'));
-        inputField.disabled = !this.checked;
-        if(this.checked) inputField.focus();
-    });
-});
+// --- 優先權計算邏輯 --- 
+function calculatePriority() { 
+// 抓取各模組被選取的數量來當基礎分數 
+const sumGov = 
+document.querySelectorAll('.srv-gov:checked').length; 
+const sumGre = document.querySelectorAll('.srv-gre:checked').length; 
+const sumMaaS = 
+document.querySelectorAll('.srv-maas:checked').length; 
+const sumCom = 
+document.querySelectorAll('.srv-com:checked').length; 
+const sumDooh = 
+document.querySelectorAll('.srv-dooh:checked').length; 
+const sumDaas = 
+document.querySelectorAll('.srv-daas:checked').length; 
+let baseScore = (sumGov * 20) + (sumGre * 15) + (sumMaaS * 12) + 
+(sumCom * 12) + (sumDooh * 8) + (sumDaas * 10); 
+// 環境與事件機率加權 (1~5，數值越大機率越高) 
+const pCrash = 
+parseInt(document.getElementById('prob_crash').value); 
+const pAcc = parseInt(document.getElementById('prob_acc').value); 
+const pFog = parseInt(document.getElementById('prob_fog').value); 
+const pTour = parseInt(document.getElementById('prob_tour').value); 
+const pSpeed = 
+parseInt(document.getElementById('prob_speed').value); 
+const terrain = parseInt(document.getElementById('terrain').value); 
+let envMultiplier = 1.0; 
+if (terrain > 1) envMultiplier += 0.1; 
+if (pCrash >= 4 || pAcc >= 4 || pSpeed >= 4) envMultiplier += 0.2; 
+if (pFog >= 4) envMultiplier += 0.15; 
+if (pTour >= 4) envMultiplier += 0.1; 
+// 基礎設施阻力扣減 
+const baseStrength = 
+document.getElementById('base_strength').value; 
+let constructPenalty = (baseStrength === 'low') ? 15 : 0; 
+// 總分計算與標準化 
+let finalScore = (baseScore * envMultiplier) - constructPenalty; 
+finalScore = Math.max(0, Math.min(100, Math.round(finalScore * 0.45 
++ 20)));  
+報告</h6> 
+const resultBox = document.getElementById('result-box'); 
+resultBox.classList.remove('d-none'); 
+resultBox.innerHTML = ` 
+<h6 class="text-info text-center fw-bold mb-3">多維度選址分析
+<div style="font-size: 2.5rem; color: var(--accent-cyan); text-align: 
+center; text-shadow: 0 0 10px rgba(0,240,255,0.5);"> 
+${finalScore} <span style="font-size: 1rem; color: #aaa;">/ 
+100 PTS</span> 
+</div> 
+<hr style="border-color: #444;"> 
+<ul style="font-size: 0.85rem; color: #ccc; line-height: 1.8;"> 
+<li>事件機率增幅係數：<span 
+class="text-warning">+${Math.round((envMultiplier-1)*100)}%</span> (安防與地形
+加權)</li> 
+<li>基礎施工阻力扣除：<span 
+class="text-danger">-${constructPenalty}</span> 分</li> 
+</ul> 
+`; 
+window.scrollTo({ top: document.body.scrollHeight, behavior: 
+'smooth' }); 
+} 
 </script> 
 </body> 
 </html> 
