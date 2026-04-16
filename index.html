@@ -341,9 +341,7 @@ id="base_strength"><option value="high">原址安裝</option><option value="low"
 <div class="row g-2"> 
 <script> 
 const hwList = ['燈控', '攝影機', '感測器', '數位看板', '可變式資訊看板', '鄰里廣播', '基地台', 'WiFi AP', '天線', '警示燈', '設備箱'];
-
 hwList.forEach(dev => {
-    // 使用反引號 ` 可以自由換行，且變數 ${dev} 才會生效
     document.write(`
         <div class="col-6 col-md-4">
             <div class="qty-group">
