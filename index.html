@@ -159,9 +159,7 @@ data-bs-toggle="tab" data-bs-target="#devices">3. 附掛服務</button></li>
 <div class="section-title"><i class="fas fa-map-marked-alt"></i> 
 空間定位</div> 
 <div id="map"></div> 
-<button class="btn-tech mb-3" onclick="getLocation()">
-    <i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標</button> 
-<div class="row g-2"> 
+<button class="btn-tech mb-3" onclick="getLocation()"><i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標</button> 
 <div class="col-6"><label class="form-label">緯度 
 (Latitude)</label><input type="number" step="any" id="lat" 
 class="form-control"></div> 
@@ -197,10 +195,8 @@ fa-exclamation-triangle"></i> 過去事件機率評估</div>
 <div class="row g-2"> 
 <script> 
 const events = [ 
-{id: 'prob_crash', label: '車禍機率'}, {id: 'prob_acc', 
-label: '意外機率'}, 
-label: '觀光人流熱區'}, 
-{id: 'prob_fog', label: '濃霧機率'}, {id: 'prob_tour', 
+{id: 'prob_crash', label: '車禍機率'}, {id: 'prob_acc', label: '意外機率'},
+{id: 'prob_fog', label: '濃霧機率'}, {id: 'prob_tour', label: '觀光人流熱區'},
 {id: 'prob_pop', label: '人口常住密度'}, {id: 
 'prob_speed', label: '車速易超過速限'} 
 ]; 
@@ -575,13 +571,13 @@ customInput.classList.add('d-none');
 customInput.value = ''; 
 if (selectVal === "3-4") { 
 display.value = "基礎埋設深度：0.8-1.0 公尺\n 基座寬度：
-0.5x0.5 公尺\n 鋼筋混凝土強度：210kg/cm²\n適用場景：人行道、公園燈"; 
+0.5x0.5 公尺\n 鋼筋混凝土強度：210kg/cm²\n 適用場景：人行道、公園燈"; 
 } else if (selectVal === "6-8") { 
 display.value = "基礎埋設深度：1.2-1.5 公尺\n 基座寬度：
-0.7x0.7 公尺\n 鋼筋混凝土強度：210kg/cm²\n適用場景：市區次要道路、巷弄"; 
+0.7x0.7 公尺\n 鋼筋混凝土強度：210kg/cm²\n 適用場景：市區次要道路、巷弄"; 
 } else if (selectVal === "10-12") { 
 display.value = "基礎埋設深度：1.8-2.2 公尺\n 基座寬度：
-1.0x1.0 公尺\n 鋼筋混凝土強度：245kg/cm²\n適用場景：主幹道、環島公路"; 
+1.0x1.0 公尺\n 鋼筋混凝土強度：245kg/cm²\n 適用場景：主幹道、環島公路"; 
 } else { 
 display.value = "請選擇路燈高度以換算基礎結構..."; 
 } 
