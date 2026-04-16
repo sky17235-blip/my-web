@@ -532,21 +532,38 @@ window.onload = () => { initMap(); };
 // --- GPS 定位 --- 
 // 將 V5.0 的 getLocation 改回穩定版
 function getLocation() {
+    // 1. 強制彈窗測試：如果點了沒跳出這個視窗，代表按鈕根本沒連到這段程式
+    console.log("定位按鈕被點擊了"); 
+
     const btn = document.querySelector('button[onclick="getLocation()"]');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 定位中...';
-    
-    navigator.geolocation.getCurrentPosition((pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        document.getElementById('lat').value = lat.toFixed(6);
-        document.getElementById('lng').value = lng.toFixed(6);
-        marker.setLatLng([lat, lng]);
-        map.setView([lat, lng], 16);
-        btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
-    }, (err) => {
-        alert("定位失敗，請確保開啟 GPS 並使用 HTTPS 網址");
-        btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
-    }, { enableHighAccuracy: true });
+
+    // 2. 直接使用瀏覽器最原始的定位，跳過所有 App 判斷
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // 更新數值
+            document.getElementById('lat').value = lat.toFixed(6);
+            document.getElementById('lng').value = lng.toFixed(6);
+            
+            // 更新地圖
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng], 16);
+            }
+            
+            document.getElementById('gps-status').innerHTML = "定位成功";
+            document.getElementById('gps-status').className = "badge bg-success";
+            btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
+        }, function(error) {
+            alert("定位失敗：" + error.message + " (請確認開啟 GPS 與 HTTPS)");
+            btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
+        }, { enableHighAccuracy: true, timeout: 5000 });
+    } else {
+        alert("您的瀏覽器不支援定位功能");
+    }
 } 
 // --- 高度選單切換處理 (連江縣基礎結構判斷) --- 
 function handleHeightChange() { 
