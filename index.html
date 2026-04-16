@@ -530,30 +530,23 @@ map.invalidateSize(); }
 }); 
 window.onload = () => { initMap(); }; 
 // --- GPS 定位 --- 
-function getLocation() { 
-const badge = document.getElementById("gps-status"); 
-if (navigator.geolocation) { 
-badge.innerText = "定位中..."; 
-badge.className = "badge bg-warning text-dark"; 
-navigator.geolocation.getCurrentPosition( 
-function(position) { 
-const lat = position.coords.latitude; 
-const lng = position.coords.longitude; 
-document.getElementById("lat").value = lat.toFixed(6); 
-document.getElementById("lng").value = lng.toFixed(6); 
-initMap(lat, lng); 
-badge.innerText = `精度: ±
-${position.coords.accuracy.toFixed(0)}m`; 
-badge.className = "badge bg-success text-white"; 
-}, 
-function(error) { 
-alert("獲取 GPS 失敗，請確認裝置權限。"); 
-badge.innerText = "定位失敗"; 
-badge.className = "badge bg-danger text-white"; 
-}, { enableHighAccuracy: true, timeout: 10000, maximumAge: 
-0 } 
-); 
-} 
+// 將 V5.0 的 getLocation 改回穩定版
+function getLocation() {
+    const btn = document.querySelector('button[onclick="getLocation()"]');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 定位中...';
+    
+    navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        document.getElementById('lat').value = lat.toFixed(6);
+        document.getElementById('lng').value = lng.toFixed(6);
+        marker.setLatLng([lat, lng]);
+        map.setView([lat, lng], 16);
+        btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
+    }, (err) => {
+        alert("定位失敗，請確保開啟 GPS 並使用 HTTPS 網址");
+        btn.innerHTML = '<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標';
+    }, { enableHighAccuracy: true });
 } 
 // --- 高度選單切換處理 (連江縣基礎結構判斷) --- 
 function handleHeightChange() { 
