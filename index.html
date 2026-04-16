@@ -176,7 +176,9 @@
             <div class="tech-card">
                 <div class="section-title"><i class="fas fa-map-marked-alt"></i> 空間定位</div>
                 <div id="map"></div>
-                <button class="btn-tech mb-3" onclick="getLocation()"><i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標</button>
+                <button class="btn-tech mb-3" onclick="getLocation()">
+			<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標
+		</button>
                 <div class="row g-2">
                     <div class="col-6"><label class="form-label">緯度 (Latitude)</label><input type="number" step="any" id="lat" class="form-control"></div>
                     <div class="col-6"><label class="form-label">經度 (Longitude)</label><input type="number" step="any" id="lng" class="form-control"></div>
@@ -547,6 +549,69 @@
             `;
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
+<div class="mt-4">
+    <button class="btn btn-success w-100 shadow-sm" onclick="saveAndExport()">
+        <i class="fas fa-file-download"></i> 儲存現勘結果並匯出 CSV
+    </button>
+</div>
+        function saveAndExport() {
+    try {
+        // 1. 抓取基本資訊
+        const lat = document.getElementById('lat').value;
+        const lng = document.getElementById('lng').value;
+        const currentTime = new Date().toLocaleString();
+        
+        if (!lat || !lng) {
+            alert("⚠️ 錯誤：請先擷取 GPS 座標再行匯出。");
+            return;
+        }
+
+        // 2. 建立 CSV 內容 (加上 \ufeff 避免 Excel 中文亂碼)
+        let csvContent = "\ufeff項目,內容\n";
+        csvContent += `現勘時間,${currentTime}\n`;
+        csvContent += `GPS 緯度,${lat}\n`;
+        csvContent += `GPS 經度,${lng}\n`;
+        csvContent += `路口特性,${document.getElementById('intersection_type').value}\n`;
+
+        // 3. 自動搜尋所有輸入數量大於 0 的設備
+        // 假設你的輸入框 class 是 qty-input 或 device-qty
+        const inputs = document.querySelectorAll('.qty-input, .device-qty');
+        let deviceCount = 0;
+        
+        inputs.forEach(input => {
+            const val = parseInt(input.value);
+            if (val > 0) {
+                // 尋找該輸入框對應的名稱 (label)
+                const group = input.closest('.qty-group');
+                const label = group ? group.querySelector('.qty-label').innerText : "未知設備";
+                csvContent += `${label},${val}\n`;
+                deviceCount++;
+            }
+        });
+
+        // 4. 執行下載動作 (針對手機 WebView 優化)
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const link = document.createElement("a");
+            const timestamp = new Date().getTime();
+            link.href = e.target.result;
+            link.download = `現勘報告_${timestamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`✅ 成功匯出！共記錄 ${deviceCount} 項設備。檔案已儲存至下載資料夾。`);
+        };
+        
+        reader.readAsDataURL(blob);
+
+    } catch (error) {
+        console.error(error);
+        alert("匯出失敗，請檢查輸入內容是否有誤。");
+    }
+}
     </script>
 </body>
 </html>
