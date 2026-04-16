@@ -547,40 +547,6 @@
             `;
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
-        function saveRecord(score) {
-    const record = {
-        id: document.getElementById('hub_id').value || "未命名",
-        lat: document.getElementById('lat').value,
-        lng: document.getElementById('lng').value,
-        score: score,
-        time: new Date().toLocaleString()
-    };
-    let allRecords = JSON.parse(localStorage.getItem('street_light_logs') || "[]");
-    allRecords.push(record);
-    localStorage.setItem('street_light_logs', JSON.stringify(allRecords));
-    alert('分析完成！資料已存入手機本機。');
-}
-
-function exportToCSV() {
-    const data = JSON.parse(localStorage.getItem('street_light_logs') || "[]");
-    if (data.length === 0) { alert("無紀錄可匯出"); return; }
-    let csvContent = "\uFEFF路燈編號,緯度,經度,分數,時間\n";
-    data.forEach(r => { csvContent += `${r.id},${r.lat},${r.lng},${r.score},${r.time}\n`; });
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `Survey_Report_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-}
-
-document.querySelectorAll('.toggle-input').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-        const inputField = document.getElementById(this.getAttribute('data-target'));
-        inputField.disabled = !this.checked;
-        if(this.checked) inputField.focus();
-    });
-});
     </script>
 </body>
 </html>
