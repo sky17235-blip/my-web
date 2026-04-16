@@ -335,24 +335,24 @@ id="base_strength"><option value="high">原址安裝</option><option value="low"
 </div> 
 </div> 
 <div class="tab-pane fade" id="devices"> 
-<div class="tech-card"> 
-<div class="section-title"><i class="fas fa-microchip"></i> 附掛
-裝置盤點 (填寫數量)</div> 
-<div class="row g-2"> 
-<script> 
-const hwList = ['燈控', '攝影機', '感測器', '數位看板', '可變式資訊看板', '鄰里廣播', '基地台', 'WiFi AP', '天線', '警示燈', '設備箱'];
-hwList.forEach(dev => {
-    document.write(`
-        <div class="col-6 col-md-4">
-            <div class="qty-group">
-                <span class="qty-label">${dev}</span>
-                <input type="number" class="qty-input device-qty" value="0" min="0">
-            </div>
-        </div>
-    `);
-});
-</script> 
-</div> 
+<div class="tech-card">
+    <div class="section-title"><i class="fas fa-microchip"></i> 附掛裝置盤點 (填寫數量)</div>
+    <div class="row g-2">
+    <script>
+        const hwList = ['燈控', '攝影機', '感測器', '數位看板', '可變式資訊看板', '鄰里廣播', '基地台', 'WiFi AP', '天線', '警示燈', '設備箱'];
+        hwList.forEach(dev => {
+            // 注意這裡使用的是鍵盤左上角的 反引號 ` 
+            document.write(`
+                <div class="col-6 col-md-4">
+                    <div class="qty-group">
+                        <span class="qty-label">${dev}</span>
+                        <input type="number" class="qty-input device-qty" value="0" min="0">
+                    </div>
+                </div>
+            `);
+        });
+    </script>
+    </div>
 </div> 
 <div class="tech-card"> 
 <div class="section-title"><i class="fas fa-project-diagram"></i> 
