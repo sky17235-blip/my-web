@@ -419,8 +419,11 @@
                 </div>
 
                 <button class="btn-tech mt-3" onclick="calculatePriority()"><i class="fas fa-calculator"></i> 執行科學選址計算</button>
-                <div id="result-box" class="alert alert-dark mt-3 d-none" style="border: 1px solid var(--accent-cyan); background: #121212;"></div>
-                <button type="button" class="btn btn-success w-100 mb-5" onclick="saveAndExport()"><i class="fas fa-file-download"></i> 儲存並匯出 CSV 報表</button>
+                <div class="d-flex gap-2 mb-3"><button class="btn btn-success flex-fill" onclick="saveToSession()"><i class="fas fa-save"></i> 當下儲存<span id="record_count_badge" class="badge bg-white text-success">0</span>
+                </button>
+
+                <button class="btn btn-purple flex-fill" onclick="exportAllRecords()" style="background-color: var(--accent-purple); color: white;"><i class="fas fa-file-export"></i> 匯出總報表</button>
+                </div>
             </div>
         </div>
     </div>
@@ -428,6 +431,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        let sessionRecords = [];
+
         const MASTER_DATA = {
     "路燈編號":[
  {
@@ -8053,6 +8058,45 @@ function updateUIWithCoords(lat, lng) {
     } else {
         console.error("座標數值錯誤，無法解析");
     }
+}
+    function saveToSession() {
+    const record = {
+        time: new Date().toLocaleString(),
+        id: document.getElementById('search_id').value || "未填",
+        lat: document.getElementById('lat').value,
+        lng: document.getElementById('lng').value,
+        // ... 加入其他你想存的欄位，例如巡檢結果
+    };
+
+    sessionRecords.push(record);
+    
+    // UI 反饋：更新按鈕狀態或顯示目前存了幾筆
+    const badge = document.getElementById('record_count_badge');
+    if(badge) badge.innerText = sessionRecords.length;
+    
+    alert(`✅ 已暫存第 ${sessionRecords.length} 筆資料`);
+}
+
+    function exportAllRecords() {
+    if (sessionRecords.length === 0) {
+        alert("目前沒有任何暫存紀錄可以匯出！");
+        return;
+    }
+
+    // 將所有暫存紀錄轉為字串 (以 CSV 為例)
+    let csvContent = "時間,編號,緯度,經度\n";
+    sessionRecords.forEach(r => {
+        csvContent += `${r.time},${r.id},${r.lat},${r.lng}\n`;
+    });
+
+    // 執行下載動作
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `現勘報表_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
     </script>
 </body>
