@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>智慧樞紐現勘系統 (Tech Edition v5)</title>
+    <title>智慧樞紐現勘系統 (Tech Edition v6)</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -18,6 +18,7 @@
             --accent-cyan: #00f0ff;
             --accent-green: #39ff14;
             --accent-purple: #b366ff;
+            --accent-orange: #ff9800;
             --shadow-light: rgba(255, 255, 255, 0.05);
             --shadow-dark: rgba(0, 0, 0, 0.6);
         }
@@ -26,14 +27,14 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
         .app-header {
             background: linear-gradient(145deg, #1a1a1f, #24242b);
             box-shadow: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
             color: var(--accent-cyan);
-            padding: 15px 20px;
+            padding: 15px 15px;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -58,6 +59,8 @@
             border: none;
             border-radius: 8px 8px 0 0;
             margin-right: 5px;
+            font-size: 0.9rem;
+            padding: 10px 12px;
             box-shadow: inset 2px 2px 5px var(--shadow-light), inset -2px -2px 5px var(--shadow-dark);
         }
 
@@ -69,7 +72,7 @@
             box-shadow: none;
         }
 
-        .tab-content { padding: 20px 15px; }
+        .tab-content { padding: 15px 10px; }
 
         .tech-card {
             background: var(--panel-bg);
@@ -90,7 +93,10 @@
             text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
         }
 
-        .form-label { font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
+        .title-orange { color: var(--accent-orange); border-color: var(--accent-orange); text-shadow: 0 0 5px rgba(255, 152, 0, 0.3); }
+        .title-purple { color: var(--accent-purple); border-color: var(--accent-purple); text-shadow: 0 0 5px rgba(179, 102, 255, 0.3); }
+
+        .form-label { font-size: 0.85rem; color: #aaa; margin-bottom: 5px; margin-top: 5px; }
 
         .form-control, .form-select {
             background-color: #1a1a1f !important;
@@ -98,6 +104,7 @@
             border: 1px solid #444;
             box-shadow: inset 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
             font-family: monospace;
+            font-size: 0.9rem;
         }
         
         .form-control:focus, .form-select:focus {
@@ -105,81 +112,68 @@
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
         }
 
-        .form-control:disabled {
-            background-color: #222 !important;
-            color: #555 !important;
-            box-shadow: none;
-        }
+        .form-control:disabled { background-color: #222 !important; color: #555 !important; box-shadow: none; }
 
-        /* 檔案上傳按鈕樣式客製化 */
         input[type="file"]::file-selector-button {
-            background: #333;
-            color: var(--accent-cyan);
-            border: 1px solid #555;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-right: 10px;
-            cursor: pointer;
+            background: #333; color: var(--accent-cyan); border: 1px solid #555;
+            padding: 5px 10px; border-radius: 4px; margin-right: 10px; cursor: pointer;
         }
 
         .qty-group {
             display: flex; align-items: center; background: #1a1a1f;
-            border-radius: 6px; padding: 5px;
-            box-shadow: inset 2px 2px 5px var(--shadow-dark);
+            border-radius: 6px; padding: 5px; box-shadow: inset 2px 2px 5px var(--shadow-dark);
         }
-        .qty-label { flex-grow: 1; font-size: 0.85rem; color: #ccc; }
-        .qty-input { width: 55px; text-align: center; border: none; background: #222; color: var(--accent-green); font-weight: bold; }
+        .qty-label { flex-grow: 1; font-size: 0.8rem; color: #ccc; }
+        .qty-input { width: 50px; text-align: center; border: none; background: #222; color: var(--accent-green); font-weight: bold; }
 
         .btn-tech {
             background: linear-gradient(145deg, #007780, #005f66);
             color: white; border: none; border-radius: 8px; padding: 12px;
-            font-weight: bold; letter-spacing: 1px;
+            font-weight: bold; letter-spacing: 1px; width: 100%;
             box-shadow: 4px 4px 8px var(--shadow-dark), -2px -2px 6px var(--shadow-light);
-            transition: all 0.2s ease; width: 100%;
+            transition: all 0.2s ease;
         }
+        .btn-tech:active { transform: scale(0.98); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light); }
 
-        .btn-tech:active {
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
-            transform: scale(0.98);
-        }
-
-        #map { height: 250px; border-radius: 8px; border: 2px solid #444; margin-bottom: 15px; z-index: 1; }
+        #map { height: 220px; border-radius: 8px; border: 2px solid #444; margin-bottom: 15px; z-index: 1; }
 
         .form-check-input { background-color: #333; border-color: #555; }
-        .form-check-input:checked {
-            background-color: var(--accent-cyan); border-color: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
-        }
+        .form-check-input:checked { background-color: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); }
         
-        .cat-title { 
-            font-size: 0.95rem; font-weight: bold; color: var(--accent-purple); 
-            border-bottom: 1px dashed #555; padding-bottom: 5px; 
-            margin-top: 15px; margin-bottom: 10px; 
-        }
+        .cat-title { font-size: 0.95rem; font-weight: bold; color: var(--accent-purple); border-bottom: 1px dashed #555; padding-bottom: 5px; margin-top: 15px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div class="app-header d-flex justify-content-between align-items-center">
-        <h5 class="m-0 fw-bold"><i class="fas fa-satellite-dish"></i> SMART HUB SURVEY <span style="font-size: 0.5em; color: #888;">v5.0</span></h5>
+        <h5 class="m-0 fw-bold" style="font-size: 1.1rem;"><i class="fas fa-satellite-dish"></i> 智慧樞紐現勘 <span style="font-size: 0.6em; color: #888;">v6.0</span></h5>
         <span class="badge bg-secondary text-light" id="gps-status">等待定位</span>
     </div>
 
     <ul class="nav nav-tabs shadow-sm" id="surveyTabs" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#location">1. 空間環境</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#hardware">2. 設施硬體</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#devices">3. 附掛服務</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#systems">4. 資訊系統</button></li>
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-loc">1.空間環境</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-hub">2.樞紐載體</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-sys">3.系統附掛</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-srv">4.應用評估</button></li>
     </ul>
 
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="location">
+        
+        <div class="tab-pane fade show active" id="tab-loc">
             <div class="tech-card">
-                <div class="section-title"><i class="fas fa-map-marked-alt"></i> 空間定位</div>
+                <div class="section-title"><i class="fas fa-map-marked-alt"></i> 樞紐空間定位</div>
+                <div class="mb-2 text-warning" style="font-size: 0.8rem;">支援標示：迴路控制箱 / 路燈 / 戶外停車格</div>
                 <div id="map"></div>
-                <button class="btn-tech mb-3" onclick="getLocation()">
-			<i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標
-		</button>
+    <div class="tech-card mb-3" style="border: 1px solid var(--accent-cyan); background: rgba(0, 240, 255, 0.05);">
+        <div class="section-title"><i class="fas fa-database"></i> 既有設施快速預載</div>
+        <div class="input-group">
+        <span class="input-group-text bg-dark text-info">編號</span>
+        <input type="text" id="search_id" class="form-control bg-dark text-white" placeholder="如: 001 或 A01">
+        <button class="btn btn-outline-cyan" type="button" onclick="quickSearch()"><i class="fas fa-search"></i> 載入</button>
+    </div>
+    <div id="search_msg" class="small mt-2" style="min-height: 20px;"></div>
+    </div>
+                <button class="btn-tech mb-3" onclick="getLocation()"><i class="fas fa-crosshairs"></i> 擷取當前 GPS 座標</button>
                 <div class="row g-2">
                     <div class="col-6"><label class="form-label">緯度 (Latitude)</label><input type="number" step="any" id="lat" class="form-control"></div>
                     <div class="col-6"><label class="form-label">經度 (Longitude)</label><input type="number" step="any" id="lng" class="form-control"></div>
@@ -187,31 +181,21 @@
             </div>
 
             <div class="tech-card">
-                <div class="section-title"><i class="fas fa-road"></i> 環境與路口特性</div>
-                <div class="mb-3">
-                    <label class="form-label">路口特性</label>
-                    <select class="form-select" id="intersection_type">
-                        <option>一般路側</option><option>雙叉</option><option>三叉</option><option>四叉或四叉以上</option><option>死路</option><option>圓環</option>
-                    </select>
-                </div>
+                <div class="section-title"><i class="fas fa-mountain"></i> 地形地物與過去事件</div>
                 <div class="mb-3">
                     <label class="form-label">地形地物概述</label>
                     <select class="form-select" id="terrain">
                         <option value="1">平坦無礙</option>
-                        <option value="2">高低起伏 (坡度>6%)</option>
-                        <option value="3">左右急彎 (彎道視距<40m)</option>
+                        <option value="2">高低起伏 (坡度 > 6%)</option>
+                        <option value="3">左右急彎 (彎道視距 < 40m)</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="tech-card">
-                <div class="section-title"><i class="fas fa-exclamation-triangle"></i> 過去事件機率評估</div>
                 <div class="row g-2">
                     <script>
                         const events = [
                             {id: 'prob_crash', label: '車禍機率'}, {id: 'prob_acc', label: '意外機率'},
                             {id: 'prob_fog', label: '濃霧機率'}, {id: 'prob_tour', label: '觀光人流熱區'},
-                            {id: 'prob_pop', label: '人口常住密度'}, {id: 'prob_speed', label: '車速易超過速限'}
+                            {id: 'prob_pop', label: '人口常住密度'}, {id: 'prob_speed', label: '車速易超速'}
                         ];
                         const options = ['極高', '高', '普通', '低', '極低'];
                         events.forEach(ev => {
@@ -227,115 +211,144 @@
                     </script>
                 </div>
             </div>
-            
-            <div class="tech-card">
-                <div class="section-title"><i class="fas fa-bolt"></i> 所屬迴路控制箱</div>
-                <div class="row g-2 mb-2">
-                    <div class="col-12"><label class="form-label">控制箱編號</label><input type="text" class="form-control"></div>
-                    <div class="col-6"><label class="form-label">控制箱緯度</label><input type="number" step="any" class="form-control"></div>
-                    <div class="col-6"><label class="form-label">控制箱經度</label><input type="number" step="any" class="form-control"></div>
-                </div>
-            </div>
         </div>
 
-        <div class="tab-pane fade" id="hardware">
+        <div class="tab-pane fade" id="tab-hub">
             
-            <div class="tech-card" style="border-color: var(--accent-green);">
-                <div class="section-title text-success"><i class="fas fa-camera"></i> 現場與草圖拍攝</div>
-                <div class="mb-3">
-                    <label class="form-label">現場照片 (可多選/連續拍攝)</label>
-                    <input type="file" class="form-control" accept="image/*" capture="environment" multiple>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">環境設計草圖</label>
-                    <input type="file" class="form-control" accept="image/*" capture="environment">
+            <div class="tech-card" style="border-color: #555;">
+                <div class="section-title text-light" style="border-color: #888;"><i class="fas fa-camera"></i> 現場與草圖拍攝</div>
+                <div class="mb-2"><label class="form-label">現場照片 (支援多選/連拍)</label><input type="file" class="form-control" accept="image/*" capture="environment" multiple></div>
+                <div><label class="form-label">環境設計草圖</label><input type="file" class="form-control" accept="image/*" capture="environment"></div>
+            </div>
+
+            <div class="tech-card">
+                <div class="section-title"><i class="fas fa-box"></i> 迴路控制箱資訊</div>
+                <div class="row g-2">
+                    <div class="col-12"><label class="form-label">控制箱編號</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">高度</label>
+                        <select class="form-select"><option>1.5M 以下</option><option>1.5M (含)以上</option></select></div>
+                    <div class="col-6"><label class="form-label">台電電錶</label>
+                        <select class="form-select"><option>有</option><option>無</option></select></div>
+                    <div class="col-6"><label class="form-label">迴路數量</label><input type="number" class="form-control" min="0"></div>
+                    <div class="col-6"><label class="form-label">管道狀態</label>
+                        <select class="form-select"><option>暢通</option><option>敗管</option></select></div>
+                    
+                    <div class="col-12 mt-2">
+                        <label class="form-label text-info">升級能源/邊緣運算中心腹地評估</label>
+                        <div class="form-check mb-1">
+                            <input class="form-check-input toggle-input" type="checkbox" id="chk_edge" data-target="edge_size">
+                            <label class="form-check-label text-light">有空間 (請填寫長x寬)</label>
+                        </div>
+                        <input type="text" id="edge_size" class="form-control form-control-sm" placeholder="例如: 2M x 1.5M" disabled>
+                    </div>
                 </div>
             </div>
 
             <div class="tech-card">
-                <div class="section-title"><i class="fas fa-layer-group"></i> 本體結構參數</div>
-                <div class="row g-3 mb-3">
-                    <div class="col-12"><label class="form-label">路燈編號</label><input type="text" class="form-control"></div>
+                <div class="section-title title-orange"><i class="fas fa-parking"></i> 戶外停車格資訊</div>
+                <div class="row g-2">
+                    <div class="col-6"><label class="form-label">停車格編號</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">屬性</label>
+                        <select class="form-select"><option>戶外停車場</option><option>路邊停車格</option></select></div>
+                    
+                    <div class="col-12 mt-2">
+                        <label class="form-label text-warning">收費亭距離評估</label>
+                        <div class="form-check mb-1">
+                            <input class="form-check-input toggle-input" type="checkbox" data-target="toll_dist">
+                            <label class="form-check-label text-light">有收費亭 (請填寫距離)</label>
+                        </div>
+                        <input type="text" id="toll_dist" class="form-control form-control-sm" placeholder="距離 (公尺)" disabled>
+                    </div>
+                    
+                    <div class="col-6"><label class="form-label">充電樁</label>
+                        <select class="form-select"><option>無</option><option>慢充</option><option>快充</option></select></div>
+                    <div class="col-6"><label class="form-label">鄰近單位/景點</label><input type="text" class="form-control"></div>
+                </div>
+            </div>
+
+            <div class="tech-card">
+                <div class="section-title text-success" style="border-color: var(--accent-green);"><i class="fas fa-lightbulb"></i> 路燈本體資訊</div>
+                <div class="row g-2">
+                    <div class="col-6"><label class="form-label">路燈編號</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">路口特性</label>
+                        <select class="form-select"><option>一般路側</option><option>雙叉</option><option>三叉</option><option>四叉或以上</option><option>死路</option><option>圓環</option></select></div>
                     
                     <div class="col-12">
                         <label class="form-label">高度選擇</label>
                         <select class="form-select" id="pole_height_select" onchange="handleHeightChange()">
-                            <option value="">請選擇高度</option>
-                            <option value="3-4">3-4 公尺</option>
-                            <option value="6-8">6-8 公尺</option>
-                            <option value="10-12">10-12 公尺</option>
-                            <option value="other">其他 (需填寫)</option>
+                            <option value="">請選擇高度</option><option value="3-4">3-4 公尺</option><option value="6-8">6-8 公尺</option><option value="10-12">10-12 公尺</option><option value="other">其他 (需填寫)</option>
                         </select>
-                        <input type="number" step="0.1" id="custom_pole_height" class="form-control mt-2 d-none" placeholder="輸入高度 (公尺)" oninput="handleHeightChange()">
+                        <input type="number" step="0.1" id="custom_pole_height" class="form-control mt-1 d-none" placeholder="輸入高度 (公尺)" oninput="handleHeightChange()">
                     </div>
 
-                    <div class="col-6"><label class="form-label">直徑 (cm)</label><input type="number" class="form-control"></div>
-                    <div class="col-6"><label class="form-label">管厚 (mm)</label><input type="number" step="0.1" class="form-control"></div>
-                    <div class="col-6"><label class="form-label">線徑 (mm²)</label><input type="number" step="0.1" class="form-control"></div>
-                    <div class="col-6"><label class="form-label">燈具盞數</label><input type="number" class="form-control" value="1" min="0"></div>
-                    <div class="col-6"><label class="form-label">延伸臂數</label><input type="number" class="form-control" value="1" min="0"></div>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label text-warning"><i class="fas fa-calculator"></i> 基礎結構自動換算 (連江縣標準)</label>
-                    <textarea id="foundation_spec" class="form-control text-info" rows="3" readonly style="font-size: 0.85rem; background: #111 !important; line-height: 1.5;"></textarea>
-                </div>
+                    <div class="col-12 mb-2">
+                        <textarea id="foundation_spec" class="form-control text-warning" rows="3" readonly style="font-size: 0.8rem; background: #111 !important; line-height: 1.4;" placeholder="基礎結構自動換算 (連江縣標準)"></textarea>
+                    </div>
 
-                <div class="row g-3">
-                    <div class="col-6">
-                        <label class="form-label">管道狀態</label>
-                        <select class="form-select"><option>暢通</option><option>敗管</option></select>
+                    <div class="col-4"><label class="form-label">管厚(mm)</label><input type="number" class="form-control"></div>
+                    <div class="col-4"><label class="form-label">直徑(cm)</label><input type="number" class="form-control"></div>
+                    <div class="col-4"><label class="form-label">線徑(mm²)</label><input type="number" class="form-control"></div>
+                    <div class="col-4"><label class="form-label">燈具盞數</label><input type="number" class="form-control" value="1"></div>
+                    <div class="col-4"><label class="form-label">延伸臂數</label><input type="number" class="form-control" value="1"></div>
+                    <div class="col-4"><label class="form-label">管道狀態</label><select class="form-select"><option>暢通</option><option>敗管</option></select></div>
+                    
+                    <div class="col-12 mt-2">
+                        <label class="form-label">基礎是否能承重 (依據上述換算判定)</label>
+                        <select class="form-select" id="base_strength"><option value="high">原址安裝</option><option value="low">重新安裝 (需補強)</option></select>
                     </div>
-                    <div class="col-6">
-                        <label class="form-label">基礎是否能承重</label>
-                        <select class="form-select" id="base_strength"><option value="high">原址安裝</option><option value="low">重新安裝</option></select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tech-card">
-                <div class="section-title"><i class="fas fa-network-wired"></i> 電力與網路配置</div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="form-label">電力來源</label>
-                        <select class="form-select">
-                            <option>台電</option><option>綠能 (風電)</option><option>綠能 (太陽能)</option>
-                        </select>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label">網路來源</label>
-                        <select class="form-select">
-                            <option>有線 (光纜)</option><option>有線 (電纜)</option>
-                            <option>無線 (4/5G)</option><option>無線 (Sub-1G)</option><option>無</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">纜線附掛方式</label>
-                    <select class="form-select"><option>既有管道</option><option>邊溝</option><option>架空</option><option>無</option></select>
                 </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="devices">
+        <div class="tab-pane fade" id="tab-sys">
             <div class="tech-card">
-                <div class="section-title"><i class="fas fa-microchip"></i> 附掛裝置盤點 (填寫數量)</div>
+                <div class="section-title"><i class="fas fa-network-wired"></i> 電力與網路配置</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label class="form-label">電力來源</label>
+                        <select class="form-select"><option>台電</option><option>綠能(風電)</option><option>綠能(太陽能)</option></select></div>
+                    <div class="col-6"><label class="form-label">網路來源</label>
+                        <select class="form-select"><option>有線(光纜)</option><option>有線(電纜)</option><option>無線(4/5G)</option><option>無線(Sub-1G)</option><option>無</option></select></div>
+                    <div class="col-6"><label class="form-label">纜線附掛方式</label>
+                        <select class="form-select"><option>既有管道</option><option>邊溝</option><option>架空</option><option>無</option></select></div>
+                    <div class="col-6"><label class="form-label">所屬控制箱編號</label><input type="text" class="form-control"></div>
+                </div>
+                
+                <div class="section-title mt-4"><i class="fas fa-microchip"></i> 智慧裝置附掛盤點 (數量)</div>
                 <div class="row g-2">
                     <script>
-                        const hwList = ['燈控', '攝影機', '感測器', '數位看板', '可變式資訊看板', '鄰里廣播', '基地台', 'WiFi AP', '天線', '警示燈', '設備箱'];
+                        const hwList = ['燈控', '攝影機', '感測器', '數位看板', '可變式看板', '鄰里廣播', '基地台', 'WiFi AP', '天線', '警示燈', '設備箱'];
                         hwList.forEach(dev => {
-                            document.write(`
-                                <div class="col-6 col-md-4">
-                                    <div class="qty-group"><span class="qty-label">${dev}</span><input type="number" class="qty-input device-qty" value="0" min="0"></div>
-                                </div>
-                            `);
+                            document.write(`<div class="col-6 col-md-4"><div class="qty-group"><span class="qty-label">${dev}</span><input type="number" class="qty-input device-qty" value="0" min="0"></div></div>`);
                         });
                     </script>
                 </div>
             </div>
 
             <div class="tech-card">
-                <div class="section-title"><i class="fas fa-project-diagram"></i> 適合未來應用服務 (可複選)</div>
+                <div class="section-title title-purple"><i class="fas fa-server"></i> 資訊系統架構本身資訊</div>
+                <div class="row g-2">
+                    <div class="col-12"><label class="form-label">系統名稱</label><input type="text" class="form-control"></div>
+                    <div class="col-12"><label class="form-label">用途</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">管理單位</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">平台性質</label>
+                        <select class="form-select"><option>SaaS</option><option>PaaS</option><option>IaaS</option></select></div>
+                    <div class="col-6"><label class="form-label">位置 (Location)</label>
+                        <select class="form-select"><option>Cloud (雲端)</option><option>On Premise (地端)</option></select></div>
+                    <div class="col-6"><label class="form-label">通訊協定</label><input type="text" class="form-control" placeholder="例: MQTT, REST API"></div>
+                    <div class="col-6"><label class="form-label">North Bound 系統</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">South Bound 系統</label><input type="text" class="form-control"></div>
+                    <div class="col-12"><label class="form-label">Server 現有情況</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">作業系統 (OS)</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">資料庫 (DB)</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">中介軟體 (Middleware)</label><input type="text" class="form-control"></div>
+                    <div class="col-6"><label class="form-label">資安授權</label><input type="text" class="form-control"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-srv">
+            <div class="tech-card">
+                <div class="section-title"><i class="fas fa-rocket"></i> 適合未來應用服務 (可複選)</div>
                 
                 <div class="cat-title"><i class="fas fa-traffic-light"></i> 政府：智慧路口</div>
                 <div class="row g-2 mb-2">
@@ -357,12 +370,9 @@
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-gre" type="checkbox"><label class="form-check-label text-light">微型風電</label></div></div>
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-gre" type="checkbox"><label class="form-check-label text-light">垂直太陽能</label></div></div>
                     
-                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="road1"><label class="form-check-label text-light">光電牆</label></div>
-                        <input type="text" id="road1" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
-                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="road2"><label class="form-check-label text-light">風力牆</label></div>
-                        <input type="text" id="road2" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
-                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="road3"><label class="form-check-label text-light">太陽能步道</label></div>
-                        <input type="text" id="road3" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
+                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="rd1"><label class="form-check-label text-light">光電牆</label></div><input type="text" id="rd1" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
+                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="rd2"><label class="form-check-label text-light">風力牆</label></div><input type="text" id="rd2" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
+                    <div class="col-12"><div class="form-check"><input class="form-check-input srv-gre toggle-input" type="checkbox" data-target="rd3"><label class="form-check-label text-light">太陽能步道</label></div><input type="text" id="rd3" class="form-control form-control-sm mt-1" placeholder="需填寫路段" disabled></div>
                 </div>
 
                 <div class="cat-title"><i class="fas fa-medkit"></i> 綠能：緊災應變</div>
@@ -376,9 +386,10 @@
                 <div class="cat-title"><i class="fas fa-car"></i> 出行：MaaS</div>
                 <div class="row g-2 mb-2">
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">機車換電站</label></div></div>
-                    <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">慢充：220VAC</label></div></div>
-                    <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">快充：380VAC</label></div></div>
+                    <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">慢充: 220VAC</label></div></div>
+                    <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">快充: 380VAC</label></div></div>
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">Kiosk</label></div></div>
+                    <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">智慧停車</label></div></div>
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-maas" type="checkbox"><label class="form-check-label text-light">車船整合</label></div></div>
                 </div>
 
@@ -405,40 +416,80 @@
                     <div class="col-6"><div class="form-check"><input class="form-check-input srv-daas" type="checkbox"><label class="form-check-label text-light">無人機物流</label></div></div>
                 </div>
 
-                <button class="btn-tech mt-3" onclick="calculatePriority()"><i class="fas fa-cogs"></i> 執行科學選址計算</button>
+                <button class="btn-tech mt-3" onclick="calculatePriority()"><i class="fas fa-calculator"></i> 執行科學選址計算</button>
                 <div id="result-box" class="alert alert-dark mt-3 d-none" style="border: 1px solid var(--accent-cyan); background: #121212;"></div>
-                <button class="btn-tech mt-3" onclick="saveAndExport()"><i class="fas fa-file-download"></i> 儲存現勘結果並匯出 CSV</button>
+                <button type="button" class="btn btn-success w-100 mb-5" onclick="saveAndExport()"><i class="fas fa-file-download"></i> 儲存並匯出 CSV 報表</button>
             </div>
         </div>
     </div>
 
-<div class="tab-pane fade" id="systems">
-    <div class="tech-card">
-        <div class="section-title"><i class="fas fa-server"></i> 資訊系統盤點 (填寫數量)</div>
-        <div class="row g-2">
-            <script>
-                const infoSystems = ['作業系統', '資料庫', '通訊協定', '中控軟體', '資安授權', '雲端儲存'];
-                infoSystems.forEach(sys => {
-                    document.write(`
-                        <div class="col-6 col-md-4">
-                            <div class="qty-group">
-                                <span class="qty-label">${sys}</span>
-                                <input type="number" class="qty-input device-qty" value="0" min="0">
-                            </div>
-                        </div>
-                    `);
-                });
-            </script>
-        </div>
-    </div>
-</div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- 1. 地圖初始化 (Leaflet) ---
+        const MASTER_DATA = {
+    "路燈編號":[
+{
+  "編號": "001",
+  "路段": "酒廠圓環至議會",
+  "型式": "LED",
+  "瓦數": "120W",
+  "色溫": "白光",
+  "高度": "8米",
+  "控制箱": "A06",
+  "備註": "   "
+ },
+],
+    "路燈控制箱": [
+        { "編號": "A06", "Google 地圖座標": "26.162700, 119.952500" }
+    ]
+};
+        //快速搜尋
+        function quickSearch() {
+    // 取得輸入框的值
+    const inputId = document.getElementById('search_id').value.trim();
+    const msgArea = document.getElementById('search_msg');
+    
+    console.log("正在搜尋:", inputId); // 可以在瀏覽器 F12 檢查有沒有跑這行
+
+    if (typeof MASTER_DATA === 'undefined') {
+        alert("資料庫尚未載入，請檢查網頁最下方的 MASTER_DATA 定義。");
+        return;
+    }
+
+    // 在路燈編號裡找
+    const pole = MASTER_DATA["路燈編號"].find(p => p.編號 === inputId);
+
+    if (pole) {
+        // 找到路燈後，找對應的控制箱
+        const cabinet = MASTER_DATA["路燈控制箱"].find(c => c.編號 === pole.控制箱);
+        
+        if (cabinet && cabinet["Google 地圖座標"]) {
+            // 分割座標字串 "26.162, 119.952"
+            const coords = cabinet["Google 地圖座標"].split(',');
+            const lat = parseFloat(coords[0].trim());
+            const lng = parseFloat(coords[1].trim());
+
+            // 自動填入經緯度輸入框
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+
+            // 移動地圖 (假設你的地圖初始化函數叫 initMap)
+            if (typeof initMap === 'function') {
+                initMap(lat, lng);
+            }
+
+            msgArea.innerHTML = `<span class="text-success">✅ 載入成功: ${pole.路段}</span>`;
+        } else {
+            msgArea.innerHTML = `<span class="text-warning">⚠ 找到路燈但對應控制箱無座標</span>`;
+        }
+    } else {
+        msgArea.innerHTML = `<span class="text-danger">❌ 找不到編號: ${inputId}</span>`;
+    }
+}
+        
+        // --- 地圖初始化 ---
         let map, marker;
-        function initMap(lat = 26.1517, lng = 119.9397) { // 預設馬祖南竿
+        function initMap(lat = 26.1517, lng = 119.9397) {
             if(map) { map.remove(); }
             map = L.map('map').setView([lat, lng], 14);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -453,21 +504,19 @@
 
         document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
             tab.addEventListener('shown.bs.tab', function (e) {
-                if(e.target.getAttribute('data-bs-target') === '#location') { if(map) map.invalidateSize(); }
+                if(e.target.getAttribute('data-bs-target') === '#tab-loc') { if(map) map.invalidateSize(); }
             });
         });
         window.onload = () => { initMap(); };
 
-        // --- GPS 定位 ---
+        // --- GPS 定位 (含錯誤防呆) ---
         function getLocation() {
             const badge = document.getElementById("gps-status");
             if (navigator.geolocation) {
-                badge.innerText = "定位中...";
-                badge.className = "badge bg-warning text-dark";
+                badge.innerText = "定位中..."; badge.className = "badge bg-warning text-dark";
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
+                        const lat = position.coords.latitude; const lng = position.coords.longitude;
                         document.getElementById("lat").value = lat.toFixed(6);
                         document.getElementById("lng").value = lng.toFixed(6);
                         initMap(lat, lng);
@@ -475,15 +524,28 @@
                         badge.className = "badge bg-success text-white";
                     },
                     function(error) {
-                        alert("獲取 GPS 失敗，請確認裝置權限。");
-                        badge.innerText = "定位失敗";
-                        badge.className = "badge bg-danger text-white";
-                    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        let errorMsg = "未知錯誤";
+                        if(error.code === error.PERMISSION_DENIED) errorMsg = "定位權限遭拒";
+                        else if(error.code === error.POSITION_UNAVAILABLE) errorMsg = "無 GPS 訊號";
+                        else if(error.code === error.TIMEOUT) errorMsg = "定位超時";
+                        alert(`獲取 GPS 失敗\n原因: ${errorMsg}\n\n*提示: 請確保使用 HTTPS 網址或系統預設瀏覽器開啟。`);
+                        badge.innerText = "定位失敗"; badge.className = "badge bg-danger text-white";
+                    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
                 );
             }
         }
 
-        // --- 高度選單切換處理 (連江縣基礎結構判斷) ---
+        // --- 處理「條件展開」的輸入框開關 ---
+        document.querySelectorAll('.toggle-input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const targetId = this.getAttribute('data-target');
+                const inputField = document.getElementById(targetId);
+                if(this.checked) { inputField.disabled = false; inputField.focus(); } 
+                else { inputField.disabled = true; inputField.value = ''; }
+            });
+        });
+
+        // --- 高度選單切換處理 (連江縣路燈基礎結構自動換算) ---
         function handleHeightChange() {
             const selectVal = document.getElementById('pole_height_select').value;
             const customInput = document.getElementById('custom_pole_height');
@@ -491,41 +553,18 @@
             
             if (selectVal === 'other') {
                 customInput.classList.remove('d-none');
-                display.value = "非標準高度，需專案結構技師特殊評估";
+                display.value = "【非標準高度】需專案結構技師特殊評估";
             } else {
-                customInput.classList.add('d-none');
-                customInput.value = '';
-                
-                if (selectVal === "3-4") {
-                    display.value = "基礎埋設深度：0.8-1.0公尺\n基座寬度：0.5x0.5公尺\n鋼筋混凝土強度：210kg/cm²\n適用場景：人行道、公園燈";
-                } else if (selectVal === "6-8") {
-                    display.value = "基礎埋設深度：1.2-1.5公尺\n基座寬度：0.7x0.7公尺\n鋼筋混凝土強度：210kg/cm²\n適用場景：市區次要道路、巷弄";
-                } else if (selectVal === "10-12") {
-                    display.value = "基礎埋設深度：1.8-2.2公尺\n基座寬度：1.0x1.0公尺\n鋼筋混凝土強度：245kg/cm²\n適用場景：主幹道、環島公路";
-                } else {
-                    display.value = "請選擇路燈高度以換算基礎結構...";
-                }
+                customInput.classList.add('d-none'); customInput.value = '';
+                if (selectVal === "3-4") display.value = "埋設深度: 0.8-1.0公尺 | 基座: 0.5x0.5公尺\n混凝土強度: 210kg/cm²\n場景: 人行道、公園燈";
+                else if (selectVal === "6-8") display.value = "埋設深度: 1.2-1.5公尺 | 基座: 0.7x0.7公尺\n混凝土強度: 210kg/cm²\n場景: 市區次要道路、巷弄";
+                else if (selectVal === "10-12") display.value = "埋設深度: 1.8-2.2公尺 | 基座: 1.0x1.0公尺\n混凝土強度: 245kg/cm²\n場景: 主幹道、環島公路";
+                else display.value = "";
             }
         }
 
-        // --- 處理「需填寫路段」的輸入框開關 ---
-        document.querySelectorAll('.toggle-input').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const targetId = this.getAttribute('data-target');
-                const inputField = document.getElementById(targetId);
-                if(this.checked) {
-                    inputField.disabled = false;
-                    inputField.focus();
-                } else {
-                    inputField.disabled = true;
-                    inputField.value = '';
-                }
-            });
-        });
-
         // --- 優先權計算邏輯 ---
         function calculatePriority() {
-            // 抓取各模組被選取的數量來當基礎分數
             const sumGov = document.querySelectorAll('.srv-gov:checked').length;
             const sumGre = document.querySelectorAll('.srv-gre:checked').length;
             const sumMaaS = document.querySelectorAll('.srv-maas:checked').length;
@@ -535,7 +574,6 @@
 
             let baseScore = (sumGov * 20) + (sumGre * 15) + (sumMaaS * 12) + (sumCom * 12) + (sumDooh * 8) + (sumDaas * 10);
 
-            // 環境與事件機率加權 (1~5，數值越大機率越高)
             const pCrash = parseInt(document.getElementById('prob_crash').value);
             const pAcc = parseInt(document.getElementById('prob_acc').value);
             const pFog = parseInt(document.getElementById('prob_fog').value);
@@ -549,73 +587,171 @@
             if (pFog >= 4) envMultiplier += 0.15;
             if (pTour >= 4) envMultiplier += 0.1;
 
-            // 基礎設施阻力扣減
             const baseStrength = document.getElementById('base_strength').value;
             let constructPenalty = (baseStrength === 'low') ? 15 : 0;
 
-            // 總分計算與標準化
             let finalScore = (baseScore * envMultiplier) - constructPenalty;
             finalScore = Math.max(0, Math.min(100, Math.round(finalScore * 0.45 + 20))); 
 
             const resultBox = document.getElementById('result-box');
             resultBox.classList.remove('d-none');
             resultBox.innerHTML = `
-                <h6 class="text-info text-center fw-bold mb-3">多維度選址分析報告</h6>
+                <h6 class="text-info text-center fw-bold mb-3">綜合選址分析報告</h6>
                 <div style="font-size: 2.5rem; color: var(--accent-cyan); text-align: center; text-shadow: 0 0 10px rgba(0,240,255,0.5);">
                     ${finalScore} <span style="font-size: 1rem; color: #aaa;">/ 100 PTS</span>
                 </div>
                 <hr style="border-color: #444;">
                 <ul style="font-size: 0.85rem; color: #ccc; line-height: 1.8;">
-                    <li>事件機率增幅係數：<span class="text-warning">+${Math.round((envMultiplier-1)*100)}%</span> (安防與地形加權)</li>
+                    <li>事件機率增幅係數：<span class="text-warning">+${Math.round((envMultiplier-1)*100)}%</span> (安防地形加權)</li>
                     <li>基礎施工阻力扣除：<span class="text-danger">-${constructPenalty}</span> 分</li>
                 </ul>
             `;
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
-
-        //
         function saveAndExport() {
-    try {
+            try {
         const lat = document.getElementById('lat').value;
         const lng = document.getElementById('lng').value;
         
         if (!lat || !lng) {
-            alert("⚠️ 請先在第一頁擷取 GPS 座標！");
+            alert("⚠️ 請先擷取 GPS 座標！");
             return;
         }
 
+        // 1. 初始化 CSV 內容 (加上 BOM \ufeff 避免 Excel 中文亂碼)
         let csvContent = "\ufeff項目,內容\n";
-        csvContent += `現勘時間,${new Date().toLocaleString()}\n`;
-        csvContent += `緯度,${lat}\n`;
-        csvContent += `經度,${lng}\n`;
+        const currentId = document.getElementById('search_id').value;
+        csvContent += `路燈/箱編號,${currentId || "未填"}\n`;
+        csvContent += `現勘報告生成時間,${new Date().toLocaleString()}\n`;
+        csvContent += `GPS 緯度,${lat}\n`;
+        csvContent += `GPS 經度,${lng}\n`;
+        csvContent += `路口特性,${document.getElementById('intersection_type').value}\n`;
 
-        // 核心：抓取所有設備與系統的數量
-        const allInputs = document.querySelectorAll('.device-qty');
-        let count = 0;
-        allInputs.forEach(input => {
+        
+        
+        // 抓取高度 (處理 Select 元素)
+        const heightEl = document.getElementById('pole_height_select');
+        const heightVal = heightEl.options[heightEl.selectedIndex].text;
+        csvContent += `本體高度,${heightVal}\n`;
+
+        // 2. 自動遍歷盤點所有設施數量 (包含 設施/附掛/資訊系統)
+        // 你的程式碼中這些 input 都有 'device-qty' 這個 class
+        const allDevices = document.querySelectorAll('.device-qty');
+        let deviceFound = 0;
+
+        allDevices.forEach(input => {
             const val = parseInt(input.value);
             if (val > 0) {
-                const label = input.closest('.qty-group').querySelector('.qty-label').innerText;
+                // 尋找父層 qty-group 裡的標籤文字
+                const group = input.closest('.qty-group');
+                const label = group ? group.querySelector('.qty-label').innerText : "未知項目";
                 csvContent += `${label},${val}\n`;
-                count++;
+                deviceFound++;
             }
         });
 
+        // 3. 執行下載
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const reader = new FileReader();
+        
         reader.onload = function(e) {
             const link = document.createElement("a");
+            const timestamp = new Date().getTime();
             link.href = e.target.result;
-            link.download = `現勘全紀錄_${new Date().getTime()}.csv`;
+            link.download = `現勘紀錄_${timestamp}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            alert(`✅ 匯出成功！共記錄 ${count} 筆設施/系統數據。`);
+            
+            alert(`✅ 匯出成功！\n共計錄 ${deviceFound} 項設施數據。`);
         };
+        
         reader.readAsDataURL(blob);
 
     } catch (err) {
+        console.error(err);
         alert("匯出失敗: " + err.message);
+    }
+}
+    // 預載資料庫 (範例結構，您可以根據 CSV 持續增補)
+        const PRELOAD_DB = {
+    // 南竿控制箱座標關聯 (由 A05, A06 等編號驅動)
+    "A05": { lat: 26.163952, lng: 119.952704, desc: "南竿-五靈宮廟海邊", type: "三岔路口" },
+    "A06": { lat: 26.162700, lng: 119.952500, desc: "南竿-酒廠圓環", type: "圓環" },
+    "A01": { lat: 26.166606, lng: 119.960107, desc: "南竿-復興三岔路口", type: "一般路側" },
+    
+    // 北竿路燈編號 (直接關聯座標，若無精確座標則以路段中心為主)
+    "午沙段001": { lat: 26.218500, lng: 119.996200, desc: "北竿-午沙段", type: "一般路側", height: "8M" },
+    "白沙段001": { lat: 26.205200, lng: 119.972100, desc: "北竿-白沙段", type: "路口", height: "8M" }
+        };
+
+// 為了讓 001 也能找到 A06 的座標，我們建立一個索引對照表
+      const POLE_TO_CABINET = {
+    "001": "A06", "002": "A06", "003": "A06", "004": "A06", "005": "A06", "006": "A06", // 001-006 屬 A06
+    "007": "A07", "008": "A07", "009": "A07", "010": "A07" // 依此類推
+        };
+
+    function quickSearch() {
+    ///抓取畫面上的輸入值
+        const searchId = document.getElementById('search_id').value.trim().toUpperCase();
+        const msgArea = document.getElementById('search_msg');
+        
+        console.log("開始搜尋編號:", searchId); // 除錯用
+
+        if (typeof MASTER_DATA === 'undefined') {
+            alert("錯誤：資料庫未正確載入，請檢查腳本末端格式。");
+            return;
+        }
+
+        // 1. 搜尋路燈
+        const pole = MASTER_DATA["路燈編號"].find(p => p.編號 === searchId);
+        
+        if (pole) {
+            // 找到路燈後，找對應控制箱
+            const cabinet = MASTER_DATA["路燈控制箱"].find(c => c.編號 === pole.控制箱);
+            if (cabinet && cabinet["Google 地圖座標"]) {
+                const coords = cabinet["Google 地圖座標"].split(',');
+                updateUIWithCoords(coords[0], coords[1]);
+                msgArea.innerHTML = `<span class="text-success">✅ 找到路燈 ${searchId} (屬 ${pole.控制箱})</span>`;
+            } else {
+                msgArea.innerHTML = `<span class="text-warning">⚠ 找到路燈但對應控制箱無座標</span>`;
+            }
+        } else {
+            // 2. 搜尋是否為控制箱編號
+            const cabinet = MASTER_DATA["路燈控制箱"].find(c => c.編號 === searchId);
+            if (cabinet && cabinet["Google 地圖座標"]) {
+                const coords = cabinet["Google 地圖座標"].split(',');
+                updateUIWithCoords(coords[0], coords[1]);
+                msgArea.innerHTML = `<span class="text-success">✅ 載入控制箱 ${searchId} 座標</span>`;
+            } else {
+                msgArea.innerHTML = `<span class="text-danger">❌ 找不到編號「${searchId}」</span>`;
+            }
+        }
+        }
+
+    // 1. 這是負責把座標填入格子並移動地圖的「執行官」
+function updateUIWithCoords(lat, lng) {
+    console.log("收到座標指令:", lat, lng);
+    
+    const nLat = parseFloat(lat);
+    const nLng = parseFloat(lng);
+
+    if (!isNaN(nLat) && !isNaN(nLng)) {
+        // A. 填入輸入框 (請確認你的 ID 是 lat 和 lng)
+        const latInput = document.getElementById('lat');
+        const lngInput = document.getElementById('lng');
+        
+        if (latInput) latInput.value = nLat.toFixed(6);
+        if (lngInput) lngInput.value = nLng.toFixed(6);
+
+        // B. 移動地圖中心點 (請確認你的初始化函數叫 initMap)
+        if (typeof initMap === 'function') {
+            initMap(nLat, nLng);
+        }
+        
+        console.log("介面與地圖更新完成");
+    } else {
+        console.error("座標數值錯誤，無法解析");
     }
 }
     </script>
